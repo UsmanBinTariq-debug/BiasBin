@@ -251,20 +251,32 @@
 </section>
 
 <script>
-function handleSubmit() {
+async function handleSubmit() {
   const input = document.getElementById('email-input');
-  const successMsg = document.getElementById('success-msg');
   const email = input.value.trim();
+
+  // Basic validation
   if (!email || !email.includes('@')) {
     input.style.borderColor = '#C84B2F';
-    input.focus();
     return;
   }
-  input.style.borderColor = '';
-  document.querySelector('.form-row').style.display = 'none';
-  successMsg.style.display = 'block';
-}
 
+  try {
+    // SEND DATA TO MAKE.COM
+    await fetch('https://hook.eu2.make.com/vzpey3smbjif9ha8s9adwao8kgq1q8gh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+
+    // Show success state
+    document.querySelector('.form-row').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Something went wrong. Please try again!');
+  }
+}
 document.getElementById('email-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') handleSubmit();
 });
